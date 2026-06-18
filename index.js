@@ -14,12 +14,14 @@ const url = process.env.MONGO_URL;
 const app = express();
 
 app.use(cors({
-  origin:[
-    "https://stock-verse-dashboard-o27amn266-ganesh-patil005s-projects.vercel.app/",
-    "https://stock-verse-dashboard-blush.vercel.app",
-    "http://localhost:5174"
-  ],  // Your React app’s URL
-  credentials: true,                 // Allow cookies to be sent
+  origin: function(origin, callback) {
+    if (!origin || origin.includes("vercel.app") || origin.includes("localhost")) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 }));
 
 app.use(bodyParser.json());
