@@ -15,7 +15,7 @@ const app = express();
 
 app.use(cors({
   origin:[
-    "http://localhost:5173",
+    "https://stock-verse-dashboard-o27amn266-ganesh-patil005s-projects.vercel.app/",
     "http://localhost:5174"
   ],  // Your React app’s URL
   credentials: true,                 // Allow cookies to be sent
