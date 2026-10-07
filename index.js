@@ -13,20 +13,6 @@ const PORT = process.env.PORT || 3002;
 const url = process.env.MONGO_URL;
 const app = express();
 
-// app.use(cors({
-//   origin: function(origin, callback) {
-//     if (!origin || origin.includes("vercel.app") || origin.includes("localhost")) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   credentials: true,
-// }));
-
-// DELETE this line:
-// const cookieParser = require("cookie-parser");
-
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
