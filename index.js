@@ -13,19 +13,40 @@ const PORT = process.env.PORT || 3002;
 const url = process.env.MONGO_URL;
 const app = express();
 
+// app.use(cors({
+//   origin: function(origin, callback) {
+//     if (!origin || origin.includes("vercel.app") || origin.includes("localhost")) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true,
+// }));
+
+// DELETE this line:
+// const cookieParser = require("cookie-parser");
+
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || origin.includes("vercel.app") || origin.includes("localhost")) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    try {
+      const host = new URL(origin).hostname;
+      if (host === "localhost" || host.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+    } catch (e) {}
+    callback(new Error("Not allowed by CORS"));
   },
-  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 app.use(bodyParser.json());
-app.use(cookieParser());
+// DELETE: app.use(cookieParser());
+
+// app.use(bodyParser.json());
+// app.use(cookieParser());
 
 // app.get("/addPositions", async (req, res) => {
 //   let tempPositions = [
@@ -96,8 +117,10 @@ app.post("/newOrder", async (req, res) => {
   res.send("Order saved!");
 });
 
-app.listen(PORT, () => {
-  console.log("app started");
-  mongoose.connect(url);
-  console.log("DB Connected");
-});
+mongoose
+  .connect(url)
+  .then(() => {
+    console.log("DB Connected");
+    app.listen(PORT, () => console.log("app started"));
+  })
+  .catch((err) => console.error("DB connection failed:", err));
